@@ -14,6 +14,7 @@ using namespace std;
 //global constants
 const int SIZE = 50;
 //structures
+//player structure stores info of player during game play
 struct player
 {
 	char name[SIZE];         // name of player
@@ -23,6 +24,7 @@ struct player
 	int xp;					 // experience points of player
 	int maxh;                // max health of player
 };
+//monster structure stores data of monster during battle in game
 struct monster
 {
 	char name[SIZE];         // name of creature
@@ -31,6 +33,7 @@ struct monster
 	int str;                 // unmodified strength of a creature
 	int xp;					 // experience points gained when defeated
 };
+//nonplayer holds the data for people that are not controlled by the player
 struct nonplayer
 {
 	char name[SIZE];         // name of npc
@@ -43,7 +46,7 @@ struct nonplayer
 void intro(player &);                   // introduction of game function
 void firstC(player &);                  // first choice in game
 void cliffall(player &);                // fall from cliff function
-void battle(player &);       // battle sequence
+void battle(player &);       			// battle sequence
 void shack(player &);                   // come across a shack function
 void path(player &);                    // travel function
 void cblater(player&);                  // save function
@@ -52,12 +55,15 @@ void inn(player&);						// come across an inn
 void town(player&);						// when come to a town
 int startmen();							// start menu function
 void load(player&);                     // load player data function
+void levleup(player&);                  // checking to see if can level up
 
 int main()
 {
 	player p1;               //Structure for payer
+	//seeding random number generator
 	srand (time(0));
 	int schoice;             // start menu choice
+	//menu for when you start up the game
 	do
 	{
 	// run start menu
@@ -80,17 +86,20 @@ int main()
 		cout << "thanks for playing hope to see you back soon";
 	}
 	}while(schoice != 3);
+	//end of program
 	return 0;
 }
 
 int startmen()
 {
+	//show options for start menu
 	int choice;
 	cout << "type number of your choice and then press enter\n";
 	cout << "1: new game\n";
 	cout << "2: continue game\n";
 	cout << "3: quit game\n";
 	cin >> choice;
+	//send choice back to main
 	return choice;
 }
 
@@ -114,6 +123,7 @@ void intro(player & p1)
 	p1.maxh = 100;
 
 	cout << "your adventure begins now\n";
+	//jump to firstC
 }
 void firstC(player & p1)
 {
@@ -163,6 +173,7 @@ void firstC(player & p1)
 					cout<<"you have no idea what you are running from but you know you did not want\n";
 					cout<<"to stay and find out shure you forgot the weapons and are now defenseless\n";
 					cout<<"but who knows you might get lucky and find a weapon before you get killed\n";
+					//go to path
 					path(p1);
 				}
 			else if(funstuf>=6 && funstuf<=13)
@@ -170,6 +181,7 @@ void firstC(player & p1)
 					cout<<"you bolt you take off running faster than you ever have all you know is you\n";
 					cout<<"do not want to be there only problem is you forgot to grab the weapons and you are not\n";
 					cout<<"looking ware you are going and run head long off a cliff.";
+					//go to cliff fall
 					cliffall(p1);
 				}
 			else if(funstuf>=14 && funstuf<=19)
@@ -219,6 +231,7 @@ void firstC(player & p1)
 						cout<<"witch just makes him angry\n";
 						cout << "you hear him scream profanitys as you run away\n";
 						cout << "all you know is you hope he never finds you\n";
+						//go to path
 						path(p1);
 					}
 				}
@@ -226,6 +239,7 @@ void firstC(player & p1)
 				{
 					cout<<"you grab the weapons by your side and bolt your scared out of your mind\n";
 					cout<<"but you are armed and ready to fight the next time you run into any monster or scary bushes\n";
+					//go to path
 					path(p1);
 				}
 			}
@@ -287,6 +301,7 @@ void firstC(player & p1)
 						cout<<"but because this is the beginning of your life as an adventurer"<<endl;
 						cout<<"you trip over the first tree root you come across and bloody your"<<endl;
 						cout<<"face on the rocky ground you get up and start to stumble down the road"<<endl;
+						p1.health = p1.health - 20;
 						path(p1);
 					}
 				else
@@ -469,8 +484,8 @@ void cliffall(player & p1)
 		}
 		else
 		{
-			cout << "sweet man you actshuly grabbed the root\n";
-			cout << "i'm surprised you actuly did it\n";
+			cout << "sweet man you actually grabbed the root\n";
+			cout << "i'm surprised you actually did it\n";
 			do
 			{
 			cout << "now do you try to climb up or drop down\n";
@@ -508,13 +523,13 @@ void cliffall(player & p1)
 				cout << "but to your surprise the river was not very deep\n";
 				cout << "your legs lock and shove strait up through your shoulders\n";
 				cout << "I am not sure if you died from the pain the blood loss\n";
-				cout << "or the fact that your leg bones are not where they should be\n";
+				cout << "or the fact that your leg bones are not where they should have been\n";
 				cout << "thanks for playing\n";
 			}
 		}
 	}
 }
-
+//function for when have a battle with some thing
 void battle(player & p1)
 {
 	monster monst;
@@ -526,7 +541,7 @@ void battle(player & p1)
 	monst.health = 100;
 	monst.str = 20;
 	monst.xp = 100;
-	cout << "a " << "monster" << " attacks\n";
+	cout << "a monster attacks\n";
 	while(p1.health > 0 && monst.health > 0)
 	{
 		cout << left <<setw(20) << "your health: " << p1.health <<endl;
@@ -551,7 +566,7 @@ void battle(player & p1)
 		if(monst.health <= 0)
 		{
 			cout << "wow you killed it you get " << monst.xp << "xp points\n";
-			p1.xp = p1.xp + monst.xp;
+			p1.xp = p1.xp + 100;
 		}
 		if(monst.health > 0)
 		{
@@ -571,6 +586,7 @@ void battle(player & p1)
 	}
 	if(p1.health >= 0)
 	{
+		levleup(p1);
 		path(p1);
 	}
 	else
@@ -578,7 +594,7 @@ void battle(player & p1)
 		cout << "it was a valiant effort but you were defeated\n";
 	}
 }
-
+//function for travel
 void path(player & p1)
 {
 	int save;
@@ -623,7 +639,7 @@ void path(player & p1)
 		town(p1);
 	}
 }
-
+//function when come across a house
 void shack(player & p1)
 {
 	int op;
@@ -670,6 +686,11 @@ void shack(player & p1)
 			cout << "you hear a strange unnatural sound\n";
 			cout << "the whole thing starts to shake\n";
 			cout << "some thing hits you over the head knocking you unconscious\n";
+			p1.health = 100;
+			p1.maxh = 100;
+			p1.str = 15;
+			p1.xp = 0;
+			p1.armor = 17;
 			firstC(p1);
 		}
 
@@ -812,8 +833,8 @@ void pit(player & p1)
 {
 	cout << "there is a pit trap in the road\n";
 	cout << "you just fell into and to top it off\n";
-	cout << "there were poison tipped spikes in the bottom of\n";
-	cout << "you die from the poised thanks for playing\n";
+	cout << "there were poison tipped spikes in the bottom of the pit\n";
+	cout << "you die from the poison thanks for playing\n";
 }
 
 void inn(player & p1)
@@ -823,4 +844,28 @@ void inn(player & p1)
 	cout << "health restored\n";
 	p1.health = p1.maxh;
 	path(p1);
+}
+
+void levleup(player & p1)
+{
+	if(p1.xp == 100)
+	{
+		cout << "you get to level up\n";
+		cout << "health = 200\n";
+		cout << "strength = 25\n";
+		p1.health = 200;
+		p1.maxh = 200;
+		p1.str = 25;
+	}
+	else if(p1.xp == 300)
+	{
+		cout << "you get to level up\n";
+		cout << "health = 300\n";
+		cout << "strength = 30\n";
+		cout << "defense = 25\n";
+		p1.health = 300;
+		p1.maxh = 300;
+		p1.str = 30;
+		p1.armor = 25;
+	}
 }
