@@ -10,6 +10,9 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
+#include "spell.h"
+#include "monster.h"
+#include "weapon.h"
 using namespace std;
 //global constants
 const int SIZE = 50;
@@ -23,25 +26,12 @@ struct player
 	int str;                 // strength of a player
 	int xp;					 // experience points of player
 	int maxh;                // max health of player
+	int maxm;                // max mana for player
+	int spel1;               // first spell equipped
+	int spel2;               // second spell equipped
+	int wepon;               // weapon equipped
 };
-//monster structure stores data of monster during battle in game
-struct monster
-{
-	char name[SIZE];         // name of creature
-	int armor;               // natural defense of a creature
-	int health;              // unmodified health of a creature
-	int str;                 // unmodified strength of a creature
-	int xp;					 // experience points gained when defeated
-};
-//nonplayer holds the data for people that are not controlled by the player
-struct nonplayer
-{
-	char name[SIZE];         // name of npc
-	int armor;               // natural defense of a npc
-	int health;              // unmodified health of a npc
-	int str;                 // unmodified strength of a npc
-	int xp;					 // experience point gained when defeated
-};
+
 //function prototypes
 void intro(player &);                   // introduction of game function
 void firstC(player &);                  // first choice in game
@@ -59,7 +49,111 @@ void levleup(player&);                  // checking to see if can level up
 
 int main()
 {
-	player p1;               //Structure for payer
+	player p1; //Structure for payer
+	// array of spells
+	spell spells[8] =
+	{
+			spell(10,100,10,false,"magic missile"),
+			spell(20,200,30,false,"acid ball"),
+			spell(30,250,40,false,"fire ball"),
+			spell(40,300,50,false,"ice storm"),
+			spell(50,350,60,false,"lighting bolt"),
+			spell(60,500,0,false,"heal"),
+			spell(70,1000,200,false,"meteor strike"),
+			spell(80,10000,1000,false,"disintegrate")
+	};
+	//array of monsters
+	monster monst[]=
+	{
+			monster(48,5,9,10,"awakend shrub"),
+			monster(8,4,10,10,"badger"),
+			monster(11,8,13,10,"giant fire beetle"),
+			monster(9,8,12,10,"jackal"),
+			monster(37,13,15,25,"giant crab"),
+			monster(19,10,12,25,"giant rat"),
+			monster(11,8,13,25,"twig blight"),
+			monster(29,12,12,25,"bandit"),
+			monster(29,13,11,50,"boar"),
+			monster(47,12,17,50,"flying sword"),
+			monster(29,12,13,50,"giant wolf spider"),
+			monster(19,12,15,50,"goblin"),
+			monster(33,12,13,50,"skeleton"),
+			monster(63,13,8,50,"zombie"),
+			monster(82,15,11,100,"thug"),
+			monster(57,15,11,100,"black bear"),
+			monster(30,13,18,100,"hobgoblin"),
+			monster(37,20,13,100,"orc"),
+			monster(138,14,14,100,"satyr"),
+			monster(70,20,13,100,"worg"),
+			monster(87,14,18,200,"animated armor"),
+			monster(62,16,12,200,"ghoul"),
+			monster(101,20,11,200,"harpy"),
+			monster(52,38,11,200,"hippogriff"),
+			monster(166,20,13,450,"berserker"),
+			monster(157,28,13,450,"awakened tree"),
+			monster(117,42,12,450,"centaur"),
+			monster(88,24,15,450,"gargoyle"),
+			monster(150,40,12,450,"griffon"),
+			monster(150,26,11,450,"oger"),
+			monster(140,32,14,700,"doppelganger"),
+			monster(115,28,15,700,"hell hound"),
+			monster(168,35,14,700,"manticore"),
+			monster(193,34,14,700,"minotaur"),
+			monster(92,8,14,700,"spector"),
+			monster(148,28,12,700,"werewolf"),
+			monster(129,44,12,700,"yeti"),
+			monster(132,40,18,700,"knight"),
+			monster(162,24,12,1100,"banshee"),
+			monster(125,32,11,1100,"ghost"),
+			monster(225,54,9,1800,"flesh golem"),
+			monster(265,74,13,1800,"hill giant"),
+			monster(204,63,15,1800,"troll"),
+			monster(282,69,14,2300,"chimera"),
+			monster(342,78,14,2300,"cyclops"),
+			monster(314,37,15,2300,"medusa"),
+			monster(279,50,13,2300,"wyvern"),
+			monster(342,102,15,3900,"frost giant"),
+			monster(427,115,15,3900,"hydra"),
+			monster(344,89,18,3900,"young green dragon"),
+			monster(396,108,18,5000,"fire giant"),
+			monster(433,80,17,5900,"stone golem"),
+			monster(617,110,19,18000,"adult red dragon")
+	};
+	//smithing weapons
+	weapon sarms[]=//low level weapons
+	{
+			weapon(4,10,"club",true),
+			weapon(4,200,"dagger",false),
+			weapon(8,20,"greatclub",false),
+			weapon(6,500,"handaxe",false),
+			weapon(6,50,"javelin",false),
+			weapon(4,200,"light hamer",false),
+			weapon(6,500,"mace",false),
+			weapon(6,20,"quaterstaff",false),
+			weapon(4,100,"sickle",false),
+			weapon(6,100,"spear",false)
+	};
+	weapon marms[]=//high level weapons
+	{
+			weapon(8,1000,"battleaxe",false),
+			weapon(8,1000,"flail",false),
+			weapon(10,2000,"glaive",false),
+			weapon(12,3000,"greataxe",false),
+			weapon(12,5000,"greatsword",false),
+			weapon(10,2000,"halberd",false),
+			weapon(12,1000,"lance",false),
+			weapon(8,1500,"longsword",false),
+			weapon(12,1000,"maul",false),
+			weapon(8,1500,"morningstar",false),
+			weapon(10,500,"pike",false),
+			weapon(8,2500,"rapier",false),
+			weapon(6,2500,"scimitar",false),
+			weapon(6,1000,"shortsword",false),
+			weapon(6,500,"trident",false),
+			weapon(8,500,"war pick",false),
+			weapon(8,1500,"warhammer",false),
+			weapon(4,2000,"whip",false)
+	};
 	//seeding random number generator
 	srand (time(0));
 	int schoice;             // start menu choice
@@ -121,6 +215,7 @@ void intro(player & p1)
 	p1.str = 15;
 	p1.xp = 0;
 	p1.maxh = 100;
+	p1.maxm = 10;
 
 	cout << "your adventure begins now\n";
 	//jump to firstC
@@ -136,7 +231,7 @@ void firstC(player & p1)
 	cout << "you wake up in a ditch on the side of the road.\n";
 	cout << "you don't remember how you got there\n";
 	cout << "all you know is the sun is hot and you have a splitting headache\n";
-	cout << "Their is a cheap sword next to you and a bow with a quiver of 10 arrows\n";
+	cout << "there is a club and bow with 2 arrows next to you\n";
 
 	//giving player there first choice
 
@@ -532,15 +627,12 @@ void cliffall(player & p1)
 //function for when have a battle with some thing
 void battle(player & p1)
 {
-	monster monst;
+	int mon = rand()%52;
 	int choice;
 	int modi;
 	int attack;
 	int deffend;
-	monst.armor = 12;
-	monst.health = 100;
-	monst.str = 20;
-	monst.xp = 100;
+
 	cout << "a monster attacks\n";
 	while(p1.health > 0 && monst.health > 0)
 	{
@@ -639,7 +731,7 @@ void path(player & p1)
 		town(p1);
 	}
 }
-//function when come across a house
+//function when come across a house with random options for what house actually is
 void shack(player & p1)
 {
 	int op;
@@ -773,7 +865,7 @@ void shack(player & p1)
 		}
 	}
 }
-
+//save game function
 void cblater(player & p1)
 {
 	fstream playerdat("save.dat", ios::out | ios::binary);
@@ -818,7 +910,7 @@ void load(player & p1)
 	cout << "name " << p1.name << endl << "health " << p1.health << endl;
 	cout << "xp " << p1.xp << endl << "strength " << p1.str << endl << "armor " << p1.armor << endl;
 }
-
+// town function
 void town(player & p1)
 {
 	cout << "a town sprawls out before your eyes\n";
@@ -828,7 +920,7 @@ void town(player & p1)
 	cout << "than fight so you head on down the road\n";
 	path(p1);
 }
-
+//pit fall function
 void pit(player & p1)
 {
 	cout << "there is a pit trap in the road\n";
@@ -836,7 +928,7 @@ void pit(player & p1)
 	cout << "there were poison tipped spikes in the bottom of the pit\n";
 	cout << "you die from the poison thanks for playing\n";
 }
-
+//inn function
 void inn(player & p1)
 {
 	cout << "you come to an inn with a very nice in keeper\n";
@@ -845,27 +937,59 @@ void inn(player & p1)
 	p1.health = p1.maxh;
 	path(p1);
 }
-
+//level up function
 void levleup(player & p1)
 {
-	if(p1.xp == 100)
+	//level 2
+	if(p1.xp == 300)
 	{
 		cout << "you get to level up\n";
-		cout << "health = 200\n";
-		cout << "strength = 25\n";
+		cout << "health up\n";
+		cout << "strength up\n";
+		cout << "mana up\n";
 		p1.health = 200;
 		p1.maxh = 200;
 		p1.str = 25;
+		p1.maxm = 20;
 	}
-	else if(p1.xp == 300)
+	//level 3
+	else if(p1.xp == 900)
 	{
 		cout << "you get to level up\n";
-		cout << "health = 300\n";
-		cout << "strength = 30\n";
-		cout << "defense = 25\n";
+		cout << "health up\n";
+		cout << "strength up\n";
+		cout << "defense up\n";
+		cout << "mana up\n";
 		p1.health = 300;
 		p1.maxh = 300;
 		p1.str = 30;
 		p1.armor = 25;
+		p1.maxm = 30;
 	}
+}
+
+spell::spell(int ma,int cos,int dam,bool eq,char na[SIZE])
+{
+	manaCost = ma;//set mana cost of spell
+	cost = cos;//set cost to buy spell
+	damage = dam;//set damage spell does
+	equip = eq;//set as unequiped
+	name[SPELSIZ] = na[SIZE];//set name
+}
+
+monster::monster(int hp,int pow,int arm,int xp,char na[SIZE])
+{
+		monshp = hp;//set health points of monster
+		power = pow;//set power of monster
+		defnce = arm;//set defense of monster
+		xppoint = xp;//set experience point worth of monster
+		name[NAMESIZE] = na[SIZE];//set name of monster
+}
+
+weapon::weapon(int pow,int cos,char na[SIZE],bool eq)
+{
+	power = pow;//set damage of a weapon
+	cost = cos;//set cost of a weapon
+	name[WEAPONSIZE] = na[SIZE];//set name of weapon
+	equip = eq;//set weapon as unequiped
 }
