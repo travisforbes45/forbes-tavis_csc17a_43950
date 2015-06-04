@@ -17,8 +17,11 @@ private:
 	char name[NAMESIZE];//name of monster
 public:
 	monster(int,int,int,int,char[NAMESIZE]);//constructor/set up monsters
-	int getmonsinfo();//retrieves monster info
-
+	int getmhealth();//retrieves monster health
+	int getmpow();//retrieves monster power
+	int getmxp();//retrieves monster xp point worth
+	char getmname();//retrieves monsters name
+	int getmdef();//retrieves monsters armor
 };
 
 

@@ -10,9 +10,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
-#include "spell.h"
-#include "monster.h"
-#include "weapon.h"
+#include "extrastuf.h"
+
 using namespace std;
 //global constants
 const int SIZE = 50;
@@ -26,12 +25,22 @@ struct player
 	int str;                 // strength of a player
 	int xp;					 // experience points of player
 	int maxh;                // max health of player
+	int level;               //evele of player
 	int maxm;                // max mana for player
-	int spel1;               // first spell equipped
-	int spel2;               // second spell equipped
-	int wepon;               // weapon equipped
+	int spelnam;               //name of spell equipped
+	int spelpow;               //damage of spell equipped
+	int wepnam;               //name of weapon equipped
+	int weppow;              //damage done by weapon
 };
-
+//monster structure
+struct batlemonster
+{
+	char mname[SIZE];
+	int marmor;
+	int mhealth;
+	int mpow;
+	int mxp;
+};
 //function prototypes
 void intro(player &);                   // introduction of game function
 void firstC(player &);                  // first choice in game
@@ -46,6 +55,8 @@ void town(player&);						// when come to a town
 int startmen();							// start menu function
 void load(player&);                     // load player data function
 void levleup(player&);                  // checking to see if can level up
+void weaponshop();                      // weapon shop to buy weapons
+void spellshop();                       // spell shop to buy spells
 
 int main()
 {
@@ -62,97 +73,37 @@ int main()
 			spell(70,1000,200,false,"meteor strike"),
 			spell(80,10000,1000,false,"disintegrate")
 	};
-	//array of monsters
-	monster monst[]=
-	{
-			monster(48,5,9,10,"awakend shrub"),
-			monster(8,4,10,10,"badger"),
-			monster(11,8,13,10,"giant fire beetle"),
-			monster(9,8,12,10,"jackal"),
-			monster(37,13,15,25,"giant crab"),
-			monster(19,10,12,25,"giant rat"),
-			monster(11,8,13,25,"twig blight"),
-			monster(29,12,12,25,"bandit"),
-			monster(29,13,11,50,"boar"),
-			monster(47,12,17,50,"flying sword"),
-			monster(29,12,13,50,"giant wolf spider"),
-			monster(19,12,15,50,"goblin"),
-			monster(33,12,13,50,"skeleton"),
-			monster(63,13,8,50,"zombie"),
-			monster(82,15,11,100,"thug"),
-			monster(57,15,11,100,"black bear"),
-			monster(30,13,18,100,"hobgoblin"),
-			monster(37,20,13,100,"orc"),
-			monster(138,14,14,100,"satyr"),
-			monster(70,20,13,100,"worg"),
-			monster(87,14,18,200,"animated armor"),
-			monster(62,16,12,200,"ghoul"),
-			monster(101,20,11,200,"harpy"),
-			monster(52,38,11,200,"hippogriff"),
-			monster(166,20,13,450,"berserker"),
-			monster(157,28,13,450,"awakened tree"),
-			monster(117,42,12,450,"centaur"),
-			monster(88,24,15,450,"gargoyle"),
-			monster(150,40,12,450,"griffon"),
-			monster(150,26,11,450,"oger"),
-			monster(140,32,14,700,"doppelganger"),
-			monster(115,28,15,700,"hell hound"),
-			monster(168,35,14,700,"manticore"),
-			monster(193,34,14,700,"minotaur"),
-			monster(92,8,14,700,"spector"),
-			monster(148,28,12,700,"werewolf"),
-			monster(129,44,12,700,"yeti"),
-			monster(132,40,18,700,"knight"),
-			monster(162,24,12,1100,"banshee"),
-			monster(125,32,11,1100,"ghost"),
-			monster(225,54,9,1800,"flesh golem"),
-			monster(265,74,13,1800,"hill giant"),
-			monster(204,63,15,1800,"troll"),
-			monster(282,69,14,2300,"chimera"),
-			monster(342,78,14,2300,"cyclops"),
-			monster(314,37,15,2300,"medusa"),
-			monster(279,50,13,2300,"wyvern"),
-			monster(342,102,15,3900,"frost giant"),
-			monster(427,115,15,3900,"hydra"),
-			monster(344,89,18,3900,"young green dragon"),
-			monster(396,108,18,5000,"fire giant"),
-			monster(433,80,17,5900,"stone golem"),
-			monster(617,110,19,18000,"adult red dragon")
-	};
 	//smithing weapons
 	weapon sarms[]=//low level weapons
 	{
 			weapon(4,10,"club",true),
-			weapon(4,200,"dagger",false),
+			weapon(20,200,"dagger",false),
 			weapon(8,20,"greatclub",false),
-			weapon(6,500,"handaxe",false),
-			weapon(6,50,"javelin",false),
-			weapon(4,200,"light hamer",false),
-			weapon(6,500,"mace",false),
-			weapon(6,20,"quaterstaff",false),
-			weapon(4,100,"sickle",false),
-			weapon(6,100,"spear",false)
-	};
-	weapon marms[]=//high level weapons
-	{
-			weapon(8,1000,"battleaxe",false),
-			weapon(8,1000,"flail",false),
-			weapon(10,2000,"glaive",false),
-			weapon(12,3000,"greataxe",false),
-			weapon(12,5000,"greatsword",false),
-			weapon(10,2000,"halberd",false),
-			weapon(12,1000,"lance",false),
-			weapon(8,1500,"longsword",false),
-			weapon(12,1000,"maul",false),
-			weapon(8,1500,"morningstar",false),
-			weapon(10,500,"pike",false),
-			weapon(8,2500,"rapier",false),
-			weapon(6,2500,"scimitar",false),
-			weapon(6,1000,"shortsword",false),
-			weapon(6,500,"trident",false),
-			weapon(8,500,"war pick",false),
-			weapon(8,1500,"warhammer",false),
-			weapon(4,2000,"whip",false)
+			weapon(30,500,"handaxe",false),
+			weapon(10,50,"javelin",false),
+			weapon(20,200,"light hamer",false),
+			weapon(30,500,"mace",false),
+			weapon(8,20,"quaterstaff",false),
+			weapon(15,100,"sickle",false),
+			weapon(15,100,"spear",false),
+			weapon(50,1000,"battleaxe",false),
+			weapon(50,1000,"flail",false),
+			weapon(80,2000,"glaive",false),
+			weapon(90,3000,"greataxe",false),
+			weapon(100,5000,"greatsword",false),
+			weapon(80,2000,"halberd",false),
+			weapon(50,1000,"lance",false),
+			weapon(70,1500,"longsword",false),
+			weapon(50,1000,"maul",false),
+			weapon(70,1500,"morningstar",false),
+			weapon(30,500,"pike",false),
+			weapon(75,2500,"rapier",false),
+			weapon(75,2500,"scimitar",false),
+			weapon(50,1000,"shortsword",false),
+			weapon(30,500,"trident",false),
+			weapon(30,500,"war pick",false),
+			weapon(70,1500,"warhammer",false),
+			weapon(80,2000,"whip",false)
 	};
 	//seeding random number generator
 	srand (time(0));
@@ -216,6 +167,7 @@ void intro(player & p1)
 	p1.xp = 0;
 	p1.maxh = 100;
 	p1.maxm = 10;
+	p1.level = 1;
 
 	cout << "your adventure begins now\n";
 	//jump to firstC
@@ -627,17 +579,80 @@ void cliffall(player & p1)
 //function for when have a battle with some thing
 void battle(player & p1)
 {
+	//berthing monsters
+	monster monst[]=
+		{
+				monster(48,5,9,10,"awakend shrub"),
+				monster(8,4,10,10,"badger"),
+				monster(11,8,13,10,"giant fire beetle"),
+				monster(9,8,12,10,"jackal"),
+				monster(37,13,15,25,"giant crab"),
+				monster(19,10,12,25,"giant rat"),
+				monster(11,8,13,25,"twig blight"),
+				monster(29,12,12,25,"bandit"),
+				monster(29,13,11,50,"boar"),
+				monster(47,12,17,50,"flying sword"),
+				monster(29,12,13,50,"giant wolf spider"),
+				monster(19,12,15,50,"goblin"),
+				monster(33,12,13,50,"skeleton"),
+				monster(63,13,8,50,"zombie"),
+				monster(82,15,11,100,"thug"),
+				monster(57,15,11,100,"black bear"),
+				monster(30,13,18,100,"hobgoblin"),
+				monster(37,20,13,100,"orc"),
+				monster(138,14,14,100,"satyr"),
+				monster(70,20,13,100,"worg"),
+				monster(87,14,18,200,"animated armor"),
+				monster(62,16,12,200,"ghoul"),
+				monster(101,20,11,200,"harpy"),
+				monster(52,38,11,200,"hippogriff"),
+				monster(166,20,13,450,"berserker"),
+				monster(157,28,13,450,"awakened tree"),
+				monster(117,42,12,450,"centaur"),
+				monster(88,24,15,450,"gargoyle"),
+				monster(150,40,12,450,"griffon"),
+				monster(150,26,11,450,"oger"),
+				monster(140,32,14,700,"doppelganger"),
+				monster(115,28,15,700,"hell hound"),
+				monster(168,35,14,700,"manticore"),
+				monster(193,34,14,700,"minotaur"),
+				monster(92,8,14,700,"spector"),
+				monster(148,28,12,700,"werewolf"),
+				monster(129,44,12,700,"yeti"),
+				monster(132,40,18,700,"knight"),
+				monster(162,24,12,1100,"banshee"),
+				monster(125,32,11,1100,"ghost"),
+				monster(225,54,9,1800,"flesh golem"),
+				monster(265,74,13,1800,"hill giant"),
+				monster(204,63,15,1800,"troll"),
+				monster(282,69,14,2300,"chimera"),
+				monster(342,78,14,2300,"cyclops"),
+				monster(314,37,15,2300,"medusa"),
+				monster(279,50,13,2300,"wyvern"),
+				monster(342,102,15,3900,"frost giant"),
+				monster(427,115,15,3900,"hydra"),
+				monster(344,89,18,3900,"young green dragon"),
+				monster(396,108,18,5000,"fire giant"),
+				monster(433,80,17,5900,"stone golem"),
+				monster(617,110,19,18000,"adult red dragon")
+		};
 	int mon = rand()%52;
+	batlemonster monstb;
+	monstb.mhealth = monst[mon].getmhealth();
+	monstb.marmor = monst[mon].getmdef();
+	monstb.mname[SIZE] = monst[mon].getmname();
+	monstb.mpow = monst[mon].getmpow();
+	monstb.mxp = monst[mon].getmxp();
 	int choice;
 	int modi;
 	int attack;
 	int deffend;
 
-	cout << "a monster attacks\n";
-	while(p1.health > 0 && monst.health > 0)
+	cout << "a " << monstb.mname << "attacks\n";
+	while(p1.health > 0 && monstb.mhealth > 0)
 	{
 		cout << left <<setw(20) << "your health: " << p1.health <<endl;
-		cout << setw(20) << "monsters health: " << monst.health << endl;
+		cout << setw(20) << monstb.mname << "health: " << monstb.mhealth << endl;
 		cout << "what do you do\n";
 		cout << "1: attack\n2: defend\n";
 		cin >> choice;
@@ -645,9 +660,9 @@ void battle(player & p1)
 		{
 			modi = rand()%20;
 			attack = p1.str + modi;
-			attack = attack - monst.armor;
+			attack = attack - monstb.marmor;
 			cout << "you did " << attack << " damage\n";
-			monst.health = monst.health - attack;
+			monstb.mhealth = monstb.mhealth - attack;
 			deffend = p1.armor;
 		}
 		else
@@ -655,15 +670,15 @@ void battle(player & p1)
 			modi = rand()%25;
 			deffend = p1.armor + modi;
 		}
-		if(monst.health <= 0)
+		if(monstb.mhealth <= 0)
 		{
-			cout << "wow you killed it you get " << monst.xp << "xp points\n";
+			cout << "wow you killed it you get " << monstb.mxp << "xp points\n";
 			p1.xp = p1.xp + 100;
 		}
-		if(monst.health > 0)
+		if(monstb.mhealth > 0)
 		{
 		modi = rand()%10;
-		attack = monst.str + modi;
+		attack = monstb.mpow + modi;
 		attack = attack - deffend;
 		if(attack > 0)
 		{
@@ -778,11 +793,6 @@ void shack(player & p1)
 			cout << "you hear a strange unnatural sound\n";
 			cout << "the whole thing starts to shake\n";
 			cout << "some thing hits you over the head knocking you unconscious\n";
-			p1.health = 100;
-			p1.maxh = 100;
-			p1.str = 15;
-			p1.xp = 0;
-			p1.armor = 17;
 			firstC(p1);
 		}
 
@@ -866,6 +876,7 @@ void shack(player & p1)
 	}
 }
 //save game function
+//saves player data to save file
 void cblater(player & p1)
 {
 	fstream playerdat("save.dat", ios::out | ios::binary);
@@ -873,7 +884,7 @@ void cblater(player & p1)
 	cout << "name " << p1.name << endl << "health " << p1.health << endl;
 	cout << "xp " << p1.xp << endl << "strength " << p1.str << endl << "armor " << p1.armor << endl;
 }
-
+//loads player data from save file
 void load(player & p1)
 {
 	fstream file;
@@ -885,25 +896,10 @@ void load(player & p1)
 	}
 	else
 	{
-	/*file.read(p1.name, sizeof(p1.name));
-	file.read(reinterpret_cast<char *>(&p1.armor), sizeof(p1.armor));
-	file.read(reinterpret_cast<char *>(&p1.health), sizeof(p1.health));
-	file.read(reinterpret_cast<char *>(&p1.str), sizeof(p1.str));
-	file.read(reinterpret_cast<char *>(&p1.xp), sizeof(p1.xp));
-	*/
-		//fstream file;
-		//file.open("monster.dat", ios::in | ios::out | ios::binary);
-
-		if (file.fail())
-		{
-		    cout << "ERROR: Cannot open the file..." << endl;
-
-		}
 		int rec = 1;
-		long posistion=(rec-1)*sizeof(monster);
+		long posistion=(rec-1)*sizeof(player);
 
 		file.seekg(posistion,ios::beg);
-			//long posistion=(rec-1)*sizeof(monster);
 			file.seekg(posistion,ios::beg);
 			file.read(reinterpret_cast<char *>(&p1),sizeof(player));
 	}
@@ -913,12 +909,33 @@ void load(player & p1)
 // town function
 void town(player & p1)
 {
+	int ran = rand()%30;
+	// town where every one is afraid of new people
+	if(ran < 10)
+	{
 	cout << "a town sprawls out before your eyes\n";
 	cout << "but as you approach all the shops and houses\n";
 	cout << "start running and closing their doors before you\n";
 	cout << "can talk to them so you decide it is better just to leave\n";
 	cout << "than fight so you head on down the road\n";
 	path(p1);
+	}
+	//town where all they have is a weapon shop
+	else if (ran < 20 && ran > 10)
+	{
+		cout << "the only thing open is the weapon\n";
+		cout << "shop so you go in to see if you\n";
+		cout << "can buy a weapon\n";
+		weaponshop();
+	}
+	//town where all they have is a spell shop
+	else
+	{
+		cout << "the only thing open is the spell\n";
+		cout << "shop so you go in to see if you\n";
+		cout << "can buy a spell\n";
+		spellshop();
+	}
 }
 //pit fall function
 void pit(player & p1)
@@ -937,11 +954,11 @@ void inn(player & p1)
 	p1.health = p1.maxh;
 	path(p1);
 }
-//level up function
+//level up function checks to see if you can level up or not
 void levleup(player & p1)
 {
 	//level 2
-	if(p1.xp == 300)
+	if(p1.xp >= 300 && p1.level < 2)
 	{
 		cout << "you get to level up\n";
 		cout << "health up\n";
@@ -951,9 +968,10 @@ void levleup(player & p1)
 		p1.maxh = 200;
 		p1.str = 25;
 		p1.maxm = 20;
+		p1.level = 2;
 	}
 	//level 3
-	else if(p1.xp == 900)
+	else if(p1.xp >= 900 && p1.level < 3)
 	{
 		cout << "you get to level up\n";
 		cout << "health up\n";
@@ -965,7 +983,130 @@ void levleup(player & p1)
 		p1.str = 30;
 		p1.armor = 25;
 		p1.maxm = 30;
+		p1.level = 3;
 	}
+	//level 4
+	else if(p1.xp >= 2700 && p1.level < 4)
+	{
+		cout << "you get to level up\n";
+		cout << "health up\n";
+		cout << "strength up\n";
+		cout << "defense up\n";
+		cout << "mana up\n";
+		p1.health = 500;
+		p1.maxh = 500;
+		p1.str = 50;
+		p1.armor = 50;
+		p1.maxm = 40;
+		p1.level = 4;
+
+	}
+	//level 4
+		else if(p1.xp >= 6500 && p1.level < 5)
+		{
+			cout << "you get to level up\n";
+			cout << "health up\n";
+			cout << "strength up\n";
+			cout << "defense up\n";
+			cout << "mana up\n";
+			p1.health = 750;
+			p1.maxh = 750;
+			p1.str = 65;
+			p1.armor = 60;
+			p1.maxm = 50;
+			p1.level = 5;
+
+		}
+	//level 6
+		else if(p1.xp >= 14000 && p1.level < 6)
+		{
+			cout << "you get to level up\n";
+			cout << "health up\n";
+			cout << "strength up\n";
+			cout << "defense up\n";
+			cout << "mana up\n";
+			p1.health = 1000;
+			p1.maxh = 1000;
+			p1.str = 80;
+			p1.armor = 70;
+			p1.maxm = 60;
+			p1.level = 6;
+
+		}
+	//level 7
+		else if(p1.xp >= 23000 && p1.level < 7)
+		{
+			cout << "you get to level up\n";
+			cout << "health up\n";
+			cout << "strength up\n";
+			cout << "defense up\n";
+			cout << "mana up\n";
+			p1.health = 1500;
+			p1.maxh = 1500;
+			p1.str = 100;
+			p1.armor = 80;
+			p1.maxm = 70;
+			p1.level = 7;
+
+		}
+	//level 8
+		else if(p1.xp >= 34000 && p1.level < 8)
+		{
+			cout << "you get to level up\n";
+			cout << "health up\n";
+			cout << "strength up\n";
+			cout << "defense up\n";
+			cout << "mana up\n";
+			p1.health = 2500;
+			p1.maxh = 2500;
+			p1.str = 120;
+			p1.armor = 100;
+			p1.maxm = 80;
+			p1.level = 8;
+
+		}
+	//level 9
+		else if(p1.xp >= 48000 && p1.level < 9)
+		{
+			cout << "you get to level up\n";
+			cout << "health up\n";
+			cout << "strength up\n";
+			cout << "defense up\n";
+			cout << "mana up\n";
+			p1.health = 5000;
+			p1.maxh = 5000;
+			p1.str = 150;
+			p1.armor = 120;
+			p1.maxm = 90;
+			p1.level = 9;
+
+		}
+	//level 10
+		else if(p1.xp >= 70000 && p1.level < 10)
+		{
+			cout << "you get to level up\n";
+			cout << "health up\n";
+			cout << "strength up\n";
+			cout << "defense up\n";
+			cout << "mana up\n";
+			p1.health = 10000;
+			p1.maxh = 10000;
+			p1.str = 200;
+			p1.armor = 150;
+			p1.maxm = 110;
+			p1.level = 10;
+
+		}
+}
+
+void spellshop()
+{
+
+}
+
+void weaponshop()
+{
+
 }
 
 spell::spell(int ma,int cos,int dam,bool eq,char na[SIZE])
@@ -993,3 +1134,33 @@ weapon::weapon(int pow,int cos,char na[SIZE],bool eq)
 	name[WEAPONSIZE] = na[SIZE];//set name of weapon
 	equip = eq;//set weapon as unequiped
 }
+
+int monster::getmhealth()
+{
+	return monshp;
+}
+
+int monster::getmpow()
+{
+	return power;
+}
+
+int monster::getmxp()
+{
+	return xppoint;
+}
+
+char monster::getmname()
+{
+	return name[SIZE];
+}
+
+int monster::getmdef()
+{
+	return defnce;
+}
+
+
+
+
+
