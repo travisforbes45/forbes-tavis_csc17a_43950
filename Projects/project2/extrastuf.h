@@ -1,12 +1,7 @@
-/*
- * extrastuf.h
- *
- *  Created on: Jun 4, 2015
- *      Author: Owner
- */
 
 #ifndef EXTRASTUF_H_
 #define EXTRASTUF_H_
+#include "string"
 const char NAMESIZE = 30;
 //class for monsters in game
 class monster
@@ -25,38 +20,4 @@ public:
 	char getmname();//retrieves monsters name
 	int getmdef();//retrieves monsters armor
 };
-
-const char SPELSIZ = 30;
-//spell class declaration
-class spell
-{
-private:
-	char name[SPELSIZ];   //name of spell
-	int manaCost;  //cost to cast the spell
-	int cost;      //cost to buy spell
-	int damage;    //damage spell does
-	bool equip; //boolean statement for if spell is equipped or not
-public:
-	spell(int,int,int,bool,char[SPELSIZ]); //constructor/set up spells
-	void setspell(); //set up spells
-    int getspellinfo();   //displays info about spell
-    void Equip(); //equip or unequip spells
-
-};
-
-const char WEAPONSIZE = 30;
-//weapon class declaration
-class weapon
-{
-private:
-	int power; //damage of weapon
-	int cost;// cost of weapon
-	char name[WEAPONSIZE];//name of weapon
-	bool equip;//if weapon is equipped
-public:
-	weapon(int,int,char[WEAPONSIZE],bool);//constructor/set up weapons
-	int getwepinfo();//retrieves weapon info
-	bool equipweapon();//equip or unequip weapon
-};
-
 #endif /* EXTRASTUF_H_ */

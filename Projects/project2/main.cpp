@@ -31,6 +31,7 @@ struct player
 	int spelpow;               //damage of spell equipped
 	int wepnam;               //name of weapon equipped
 	int weppow;              //damage done by weapon
+	int gold;                //amount of money player has
 };
 //monster structure
 struct batlemonster
@@ -55,56 +56,10 @@ void town(player&);						// when come to a town
 int startmen();							// start menu function
 void load(player&);                     // load player data function
 void levleup(player&);                  // checking to see if can level up
-void weaponshop();                      // weapon shop to buy weapons
-void spellshop();                       // spell shop to buy spells
 
 int main()
 {
 	player p1; //Structure for payer
-	// array of spells
-	spell spells[8] =
-	{
-			spell(10,100,10,false,"magic missile"),
-			spell(20,200,30,false,"acid ball"),
-			spell(30,250,40,false,"fire ball"),
-			spell(40,300,50,false,"ice storm"),
-			spell(50,350,60,false,"lighting bolt"),
-			spell(60,500,0,false,"heal"),
-			spell(70,1000,200,false,"meteor strike"),
-			spell(80,10000,1000,false,"disintegrate")
-	};
-	//smithing weapons
-	weapon sarms[]=//low level weapons
-	{
-			weapon(4,10,"club",true),
-			weapon(20,200,"dagger",false),
-			weapon(8,20,"greatclub",false),
-			weapon(30,500,"handaxe",false),
-			weapon(10,50,"javelin",false),
-			weapon(20,200,"light hamer",false),
-			weapon(30,500,"mace",false),
-			weapon(8,20,"quaterstaff",false),
-			weapon(15,100,"sickle",false),
-			weapon(15,100,"spear",false),
-			weapon(50,1000,"battleaxe",false),
-			weapon(50,1000,"flail",false),
-			weapon(80,2000,"glaive",false),
-			weapon(90,3000,"greataxe",false),
-			weapon(100,5000,"greatsword",false),
-			weapon(80,2000,"halberd",false),
-			weapon(50,1000,"lance",false),
-			weapon(70,1500,"longsword",false),
-			weapon(50,1000,"maul",false),
-			weapon(70,1500,"morningstar",false),
-			weapon(30,500,"pike",false),
-			weapon(75,2500,"rapier",false),
-			weapon(75,2500,"scimitar",false),
-			weapon(50,1000,"shortsword",false),
-			weapon(30,500,"trident",false),
-			weapon(30,500,"war pick",false),
-			weapon(70,1500,"warhammer",false),
-			weapon(80,2000,"whip",false)
-	};
 	//seeding random number generator
 	srand (time(0));
 	int schoice;             // start menu choice
@@ -403,6 +358,7 @@ void firstC(player & p1)
 								cout << "invalid choice\n";
 							}
 						}while(choice < 1 || choice > 2);
+						//consequsnses for being shot by an arrow
 						if(choice == 1)
 						{
 							cout << "you rip the arrow free not thinking if it has a\n";
@@ -433,7 +389,7 @@ void firstC(player & p1)
 			}
 }
 
-// function when you fall off a cliff
+// function when you fall or run off a cliff
 
 void cliffall(player & p1)
 {
@@ -442,11 +398,13 @@ void cliffall(player & p1)
 	int op;
 	cout << "you tumble down the cliff gaining speed as you go\n";
 	cout << "as you fall you notice a large root approaching \n";
+	//ask if want to avoid or try to grab the branch
 	do
 	{
 	cout << "do you try to avoid or try to grab the root\n";
 	cout << "1: try to avoid\n2: try to grab";
 	cin >> choice;
+	//input validation
 	if(choice < 1 || choice > 2)
 		{
 			cout << "invalid input try again";
@@ -456,6 +414,7 @@ void cliffall(player & p1)
 	if(choice == 1)
 	{
 		op = rand()%7;
+		//try to avoid branch but hit your head on it and drown
 		if(op <= 3)
 		{
 			cout << "you try to avoid the root\n"<<"but you are not fast enough to roll out of the way\n";
@@ -464,6 +423,7 @@ void cliffall(player & p1)
 			cout << "and drown and because there was no one there to save you your dead\n";
 			cout << "thanks for playing\n";
 		}
+		//avoid branch but hit nest of killer bees
 		else if(op >3 ||op <= 5)
 		{
 			cout << "you some how manage to avoid the root but not with out a hiccup\n";
@@ -474,6 +434,7 @@ void cliffall(player & p1)
 			cout << "before you hit the ground\n";
 			cout << "thanks for playing\n";
 		}
+		//avoid branch and survive the fall
 		else
 		{
 			cout << "you success fully dodge the root and\n";
@@ -490,11 +451,13 @@ void cliffall(player & p1)
 	else
 	{
 		op = rand()%7;
+		//grab the branch but are to fat and it brakes
 		if(op <= 3)
 		{
 			cout << "you reach for the branch and grab hold\n";
 			cout << "but it is not strong enough to hold your fat but\n";
 			cout << "so all you did was slow your fall\n";
+			//end up falling to your death
 			if(op < 5)
 			{
 				cout << "sadly for you it is not enough for you\n";
@@ -505,6 +468,7 @@ void cliffall(player & p1)
 				cout << "your eyes you are impaled by the rocks and die\n";
 				cout << "thanks for playing\n";
 			}
+			//end up surviving the fall
 			else
 			{
 				cout << "and lucky for you there is flat ground at the bottom\n";
@@ -517,6 +481,7 @@ void cliffall(player & p1)
 				path(p1);
 			}
 		}
+		//to slow and miss the branch
 		else if(op >3 || op < 5)
 		{
 			cout << "you attempt to reach for the root but were to slow and\n";
@@ -529,6 +494,7 @@ void cliffall(player & p1)
 			cout << "yes that means your are dead\n";
 			cout << "thanks for playing;";
 		}
+		//you grab the branch
 		else
 		{
 			cout << "sweet man you actually grabbed the root\n";
@@ -546,6 +512,7 @@ void cliffall(player & p1)
 			if(choice == 1)
 			{
 				cout << "you start to climb\n";
+				//dont quite make the top of the cliff
 				if(op < 5)
 				{
 					cout << "as you climb you get tiered\n";
@@ -556,6 +523,7 @@ void cliffall(player & p1)
 					cout << "and fall to your death\n";
 					cout << "thanks for playing\n";
 				}
+				//successfully climb up to top of cliff
 				else
 				{
 					cout << "you make it to the top\n";
@@ -563,6 +531,7 @@ void cliffall(player & p1)
 					path(p1);
 				}
 			}
+			//if dont decide to try and climb up
 			else
 			{
 				cout << "you look down and see a river\n";
@@ -651,13 +620,17 @@ void battle(player & p1)
 	cout << "a " << monstb.mname << "attacks\n";
 	while(p1.health > 0 && monstb.mhealth > 0)
 	{
+		//displaying yours and monsters health
 		cout << left <<setw(20) << "your health: " << p1.health <<endl;
 		cout << setw(20) << monstb.mname << "health: " << monstb.mhealth << endl;
+		//asking what you want to do
 		cout << "what do you do\n";
 		cout << "1: attack\n2: defend\n";
 		cin >> choice;
+		//if you chosse to attack
 		if(choice == 1)
 		{
+			//math to see how much damage attack will do
 			modi = rand()%20;
 			attack = p1.str + modi;
 			attack = attack - monstb.marmor;
@@ -665,37 +638,45 @@ void battle(player & p1)
 			monstb.mhealth = monstb.mhealth - attack;
 			deffend = p1.armor;
 		}
+		//if you chose to boost your defence
 		else
 		{
 			modi = rand()%25;
 			deffend = p1.armor + modi;
 		}
+		//checking to see if you killed the monster
 		if(monstb.mhealth <= 0)
 		{
 			cout << "wow you killed it you get " << monstb.mxp << "xp points\n";
-			p1.xp = p1.xp + 100;
+			p1.xp = p1.xp + monstb.mxp;
+			p1.gold = p1.gold+rand()%100;
 		}
 		if(monstb.mhealth > 0)
 		{
+		//doing math to figure out what the monsters attack will be
 		modi = rand()%10;
 		attack = monstb.mpow + modi;
 		attack = attack - deffend;
+		//if monsters attack was greater than your defence
 		if(attack > 0)
 		{
 		p1.health = p1.health - attack;
 		cout << attack << " damage is dealt to you\n";
 		}
+		//if monsters attack is less than your defense
 		else
 		{
 			cout << "miss\n";
 		}
 		}
 	}
+	//if you beat the monster
 	if(p1.health >= 0)
 	{
 		levleup(p1);
 		path(p1);
 	}
+	//if monster kills you
 	else
 	{
 		cout << "it was a valiant effort but you were defeated\n";
@@ -706,41 +687,51 @@ void path(player & p1)
 {
 	int save;
 	int op;
+	//asks if want to save
 	do
 	{
 		cout << "do you want to save your progress\n";
 		cout << "1: save\n2: don't save\n";
 		cin >> save;
+		//Error checking
 		if(save < 1 || save > 2)
 			{
 				cout << "invalid choice";
 			}
 	}while(save < 1 || save > 2);
+	//sends to save function so you can save your self
 	if(save == 1)
 	{
 	cblater(p1);
 	}
+	//thing that chooses what happens to you while you are traveling
 	op  = rand()%100;
+	//while traveling you are attacked
 	if(op >= 1 && op<50)
 	{
 		battle(p1);
 	}
+	//while traveling you come across a ship
 	else if(op > 49 && op < 70)
 	{
 		shack(p1);
 	}
+	//while traveling you fall off a cliff
 	else if(op >69 && op < 80)
 	{
 		cliffall(p1);
 	}
+	//while traveling you come to an inn
 	else if(op > 79 && op < 85)
 	{
 		inn(p1);
 	}
+	//while traveling you fall into a pit
 	else if(op > 84 && op < 90)
 	{
 		pit(p1);
 	}
+	//will traveling you come to a town
 	else
 	{
 		town(p1);
@@ -753,6 +744,7 @@ void shack(player & p1)
 	int choice;
 	cout << "you come to a ";
 	op=rand()%100;
+	//come across a shack that has a trip wire bomb guarding the door
 	if(op <= 30)
 	{
 		cout << "shack\n";
@@ -773,6 +765,8 @@ void shack(player & p1)
 			cout << "because your dead thanks for playing\n";
 		}
 	}
+	//come across a time traveler
+	//who deskised his ship as a shack
 	else if(op == 31)
 	{
 		cout << "shack\n";
@@ -795,8 +789,8 @@ void shack(player & p1)
 			cout << "some thing hits you over the head knocking you unconscious\n";
 			firstC(p1);
 		}
-
 	}
+	//come to an abandoned shack
 	else if(op > 31 || op<45)
 	{
 		cout << "shack\n";
@@ -816,6 +810,7 @@ void shack(player & p1)
 			path(p1);
 		}
 	}
+	//shack acutely has a bottomless pit as a floor
 	else if(op > 44 && op < 70)
 	{
 		cout << "shack\n";
@@ -836,6 +831,7 @@ void shack(player & p1)
 			cout << "when you hit thanks for playing\n";
 		}
 	}
+	//come to a shack with a murderer hiding in side
 	else if(op > 69 && op < 90)
 	{
 		cout << "shack\n";
@@ -851,10 +847,12 @@ void shack(player & p1)
 		{
 			cout << "you open the door and step inside\n";
 			cout << "then comes the scream of a psychopath\n";
-			cout << "and fell the blade as it cuts through your \n";
+			cout << "and fell the blade as it cuts through you \n";
+			cout<< "as he drags it across your neck";
 			cout << "thanks for playing\n";
 		}
 	}
+	//come across shack with sleeping people
 	else
 	{
 		cout << "shack\n";
@@ -889,11 +887,12 @@ void load(player & p1)
 {
 	fstream file;
 	file.open("save.dat", ios::in | ios::out | ios::binary);
-
+//check to see if real
 	if (file.fail())
 	{
 	    cout << "ERROR: Cannot open the file..." << endl;
 	}
+	//if real
 	else
 	{
 		int rec = 1;
@@ -907,37 +906,18 @@ void load(player & p1)
 	cout << "xp " << p1.xp << endl << "strength " << p1.str << endl << "armor " << p1.armor << endl;
 }
 // town function
+// you come across a town maybe some day it will acutely do some thing
 void town(player & p1)
 {
-	int ran = rand()%30;
-	// town where every one is afraid of new people
-	if(ran < 10)
-	{
 	cout << "a town sprawls out before your eyes\n";
 	cout << "but as you approach all the shops and houses\n";
 	cout << "start running and closing their doors before you\n";
 	cout << "can talk to them so you decide it is better just to leave\n";
 	cout << "than fight so you head on down the road\n";
 	path(p1);
-	}
-	//town where all they have is a weapon shop
-	else if (ran < 20 && ran > 10)
-	{
-		cout << "the only thing open is the weapon\n";
-		cout << "shop so you go in to see if you\n";
-		cout << "can buy a weapon\n";
-		weaponshop();
-	}
-	//town where all they have is a spell shop
-	else
-	{
-		cout << "the only thing open is the spell\n";
-		cout << "shop so you go in to see if you\n";
-		cout << "can buy a spell\n";
-		spellshop();
-	}
 }
 //pit fall function
+//where you fall in a pit and die
 void pit(player & p1)
 {
 	cout << "there is a pit trap in the road\n";
@@ -946,6 +926,7 @@ void pit(player & p1)
 	cout << "you die from the poison thanks for playing\n";
 }
 //inn function
+//a magical place where your health is restored
 void inn(player & p1)
 {
 	cout << "you come to an inn with a very nice in keeper\n";
@@ -955,6 +936,7 @@ void inn(player & p1)
 	path(p1);
 }
 //level up function checks to see if you can level up or not
+//and if you can it takes you to the next level
 void levleup(player & p1)
 {
 	//level 2
@@ -999,9 +981,8 @@ void levleup(player & p1)
 		p1.armor = 50;
 		p1.maxm = 40;
 		p1.level = 4;
-
 	}
-	//level 4
+	//level 5
 		else if(p1.xp >= 6500 && p1.level < 5)
 		{
 			cout << "you get to level up\n";
@@ -1015,7 +996,6 @@ void levleup(player & p1)
 			p1.armor = 60;
 			p1.maxm = 50;
 			p1.level = 5;
-
 		}
 	//level 6
 		else if(p1.xp >= 14000 && p1.level < 6)
@@ -1031,7 +1011,6 @@ void levleup(player & p1)
 			p1.armor = 70;
 			p1.maxm = 60;
 			p1.level = 6;
-
 		}
 	//level 7
 		else if(p1.xp >= 23000 && p1.level < 7)
@@ -1047,7 +1026,6 @@ void levleup(player & p1)
 			p1.armor = 80;
 			p1.maxm = 70;
 			p1.level = 7;
-
 		}
 	//level 8
 		else if(p1.xp >= 34000 && p1.level < 8)
@@ -1063,7 +1041,6 @@ void levleup(player & p1)
 			p1.armor = 100;
 			p1.maxm = 80;
 			p1.level = 8;
-
 		}
 	//level 9
 		else if(p1.xp >= 48000 && p1.level < 9)
@@ -1079,7 +1056,6 @@ void levleup(player & p1)
 			p1.armor = 120;
 			p1.maxm = 90;
 			p1.level = 9;
-
 		}
 	//level 10
 		else if(p1.xp >= 70000 && p1.level < 10)
@@ -1095,29 +1071,9 @@ void levleup(player & p1)
 			p1.armor = 150;
 			p1.maxm = 110;
 			p1.level = 10;
-
 		}
 }
-
-void spellshop()
-{
-
-}
-
-void weaponshop()
-{
-
-}
-
-spell::spell(int ma,int cos,int dam,bool eq,char na[SIZE])
-{
-	manaCost = ma;//set mana cost of spell
-	cost = cos;//set cost to buy spell
-	damage = dam;//set damage spell does
-	equip = eq;//set as unequiped
-	name[SPELSIZ] = na[SIZE];//set name
-}
-
+//constructor for monster class
 monster::monster(int hp,int pow,int arm,int xp,char na[SIZE])
 {
 		monshp = hp;//set health points of monster
@@ -1126,41 +1082,28 @@ monster::monster(int hp,int pow,int arm,int xp,char na[SIZE])
 		xppoint = xp;//set experience point worth of monster
 		name[NAMESIZE] = na[SIZE];//set name of monster
 }
-
-weapon::weapon(int pow,int cos,char na[SIZE],bool eq)
-{
-	power = pow;//set damage of a weapon
-	cost = cos;//set cost of a weapon
-	name[WEAPONSIZE] = na[SIZE];//set name of weapon
-	equip = eq;//set weapon as unequiped
-}
-
+//gets monsters health
 int monster::getmhealth()
 {
 	return monshp;
 }
-
+//get monsters power
 int monster::getmpow()
 {
 	return power;
 }
-
+//get monsters expireiance point worth
 int monster::getmxp()
 {
 	return xppoint;
 }
-
+//get monsters name
 char monster::getmname()
 {
 	return name[SIZE];
 }
-
+//get monsters armor
 int monster::getmdef()
 {
 	return defnce;
 }
-
-
-
-
-
